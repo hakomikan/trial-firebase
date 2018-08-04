@@ -1,0 +1,102 @@
+html {
+  padding: 0px;
+  margin: 0px;
+  color: #777;
+}
+
+body {
+  padding: 10px 15px 10px 15px;
+}
+
+h1 {
+  margin: 0px;
+  margin-bottom: 8pt;
+  border-bottom-style: dashed;
+}
+
+div.test {
+  display: inline-block;
+  position: relative;
+}
+
+li {
+  padding-left: 2pt;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+  font-size: 14pt;
+  list-style: none;
+  font-family: Arial, Helvetica, sans-serif;
+  width: auto;
+  position: relative;
+}
+
+i.far {
+  vertical-align: baseline;
+}
+
+span {
+  margin-left: 0.5em;
+  vertical-align: bottom;
+}
+
+i.subicon {
+  visibility: hidden;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+li:hover i.subicon {
+  visibility: visible
+}
+
+.intermadiate * {
+  color: #ddd;
+}
+
+h1 input {
+  color: #777;
+  font-size: 130%;
+  font-style: normal;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+input {
+  color: #777;
+  border-style: none;
+  font-size: 14pt;
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  width: 70%;
+}
+
+input:focus {
+  outline-style: none;
+}
+
+.intermadiate input {
+  border-style: none;
+}
+
+.intermadiate input:focus {
+  color: #777;
+}
+
+::placeholder {
+  color: #ddd;
+}
+
+@media print{
+  @page {
+    margin: 0px;
+  }
+
+  .intermadiate {
+    visibility: hidden;
+  }
+
+  li:hover i.subicon {
+    visibility: hidden
+  }
+}
