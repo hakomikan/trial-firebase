@@ -47,26 +47,28 @@ class App extends React.Component {
       const prevIndex = Math.max(-1, currentIndex-1);
       const nextTarget = this.refs["input:" + prevIndex] as any;
       const tmp = nextTarget.value;
+      nextTarget.focus();
       nextTarget.value = '';
       nextTarget.value = tmp;
-      nextTarget.focus();
+      event.preventDefault();
     }
     if (event.keyCode === Key.DownArrow) {
       const nextIndex = Math.min(this.state.tasks.length, currentIndex+1);
       const nextTarget = this.refs["input:" + nextIndex] as any;
       const tmp = nextTarget.value;
+      nextTarget.focus();
       nextTarget.value = '';
       nextTarget.value = tmp;
-      nextTarget.focus();
+      event.preventDefault();
     }
     if (event.keyCode === Key.Backspace && event.currentTarget.value === "" && currentIndex !== this.state.tasks.length && currentIndex !== -1) {
       event.preventDefault();
 
       const nextTarget = this.refs["input:" + (currentIndex - 1)] as any;
       const tmp = nextTarget.value;
+      nextTarget.focus();
       nextTarget.value = '';
       nextTarget.value = tmp;
-      nextTarget.focus();
       this.state.tasks.splice(currentIndex, 1)
       this.setState({ "tasks": this.state.tasks })        
     }
