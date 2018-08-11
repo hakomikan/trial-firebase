@@ -1,4 +1,4 @@
-import * as firebase from "firebase";
+import * as firebase from "firebase/app";
 import 'firebase/auth';
 import 'firebase/database';
 import * as React from 'react';
@@ -33,6 +33,7 @@ class App extends React.Component {
     this.changeExistTask = this.changeExistTask.bind(this);
     this.onNewTaskFocusOut = this.onNewTaskFocusOut.bind(this);
     this.onLogin = this.onLogin.bind(this);
+    this.onLogout = this.onLogout.bind(this);
 
     const config = {
       apiKey: "AIzaSyDdIKPJVVwa8pXOHa-yGfdYr_s9ru2Lj-k",
@@ -66,7 +67,7 @@ class App extends React.Component {
       });
     }
     if (event.keyCode === Key.UpArrow) {
-      const prevIndex = Math.max(-1, currentIndex-1);
+      const prevIndex = Math.max(-1, currentIndex - 1);
       const nextTarget = this.refs["input:" + prevIndex] as any;
       const tmp = nextTarget.value;
       nextTarget.focus();
@@ -75,7 +76,7 @@ class App extends React.Component {
       event.preventDefault();
     }
     if (event.keyCode === Key.DownArrow) {
-      const nextIndex = Math.min(this.state.tasks.length, currentIndex+1);
+      const nextIndex = Math.min(this.state.tasks.length, currentIndex + 1);
       const nextTarget = this.refs["input:" + nextIndex] as any;
       const tmp = nextTarget.value;
       nextTarget.focus();
@@ -92,7 +93,7 @@ class App extends React.Component {
       nextTarget.value = '';
       nextTarget.value = tmp;
       this.state.tasks.splice(currentIndex, 1)
-      this.setState({ "tasks": this.state.tasks })        
+      this.setState({ "tasks": this.state.tasks })
     }
   }
 
@@ -128,41 +129,78 @@ class App extends React.Component {
   }
 
   public onLogin(event: any) {
-    this.fbauth.signInWithPopup(this.fbgoogleprovider).then( result => {
-      if( result.credential !== null ) {
+    this.fbauth.signInWithPopup(this.fbgoogleprovider).then(result => {
+      if (result.credential !== null) {
         console.log("logged in!");
         this.setState({
           "accessToken": (result.credential as any).accessToken,
           "loginState": "loggedin",
-          "userName": result.user,          
-        });  
+          "userName": (result.user as firebase.User).displayName,
+        });
       }
-    }).catch( error => {
+    }).catch(error => {
       console.log(error)
     });
+  }
+
+  public onLogout(event: any) {
+    this.fbauth.signOut().then( () => {
+      console.log("logged out!");
+      this.setState({
+        "accessToken": null,
+        "loginState": null,
+        "userName": null
+      });
+    })
+  }
+
+  public getLoginStateName() : string {
+    if (this.state.loginState === "loggedin")
+    {
+      return "Logged in";
+    }
+    else {
+      return "Not login";
+    }
+  }
+
+  public getUserName() : string {
+    if (this.state.userName) {
+      return this.state.userName;
+    }
+    else {
+      return "<no user>";
+    }
   }
 
   public render() {
     return (
       <div>
-        <h1>
-          <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
-          <i className="fas fa-sign-in-alt" onClick={this.onLogin} />
-        </h1>
-        <div className="test">
-          {this.state.tasks.map((task: string, i: any) => (
-            <li key={i}>
-              <i className="far fa-square" />
-              <span><input onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
-              <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
+        <div className="systemMenu">
+          <span>State: {this.getLoginStateName()}</span>
+          <span>User: {this.getUserName()}</span>
+          　<a title="login" href={undefined} onClick={this.onLogin}><i className="fas fa-sign-in-alt"/></a>
+          　<a title="logout" href={undefined} onClick={this.onLogout}><i className="fas fa-sign-out-alt"/></a>
+        </div>
+        <div>
+          <h1>
+            <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+          </h1>
+          <div className="test">
+            {this.state.tasks.map((task: string, i: any) => (
+              <li key={i}>
+                <i className="far fa-square" />
+                <span><input onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
+                <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
+              </li>
+            ))}
+            <li itemType="text" className="intermadiate">
+              <i className="intermediate far fa-square" />
+              <span>
+                <input ref={"input:" + this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
+              </span>
             </li>
-          ))}
-          <li itemType="text" className="intermadiate">
-            <i className="intermediate far fa-square" />
-            <span>
-              <input ref={"input:"+this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
-            </span>
-          </li>
+          </div>
         </div>
       </div>
     );
