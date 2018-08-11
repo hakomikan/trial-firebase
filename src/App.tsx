@@ -1,4 +1,6 @@
 import * as firebase from "firebase";
+import 'firebase/auth';
+import 'firebase/database';
 import * as React from 'react';
 import { Key } from 'ts-keycode-enum';
 import './App.css';
@@ -6,6 +8,10 @@ import './App.css';
 class App extends React.Component {
 
   public state: any;
+  public fbapp: firebase.app.App;
+  public fbauth: firebase.auth.Auth;
+  public fbdb: firebase.database.Database;
+  public fbgoogleprovider: firebase.auth.GoogleAuthProvider;
 
   constructor(props: any) {
     super(props)
@@ -26,6 +32,7 @@ class App extends React.Component {
     this.deleteTask = this.deleteTask.bind(this);
     this.changeExistTask = this.changeExistTask.bind(this);
     this.onNewTaskFocusOut = this.onNewTaskFocusOut.bind(this);
+    this.onLogin = this.onLogin.bind(this);
 
     const config = {
       apiKey: "AIzaSyDdIKPJVVwa8pXOHa-yGfdYr_s9ru2Lj-k",
@@ -35,7 +42,11 @@ class App extends React.Component {
       projectId: "checklist-3e43e",
       storageBucket: "",
     };
-    firebase.initializeApp(config);
+
+    this.fbapp = firebase.initializeApp(config);
+    this.fbauth = this.fbapp.auth();
+    this.fbdb = this.fbapp.database();
+    this.fbgoogleprovider = new firebase.auth.GoogleAuthProvider();
   }
 
   public OnKeyDown(event: any) {
@@ -116,10 +127,28 @@ class App extends React.Component {
     }
   }
 
+  public onLogin(event: any) {
+    this.fbauth.signInWithPopup(this.fbgoogleprovider).then( result => {
+      if( result.credential !== null ) {
+        console.log("logged in!");
+        this.setState({
+          "accessToken": (result.credential as any).accessToken,
+          "loginState": "loggedin",
+          "userName": result.user,          
+        });  
+      }
+    }).catch( error => {
+      console.log(error)
+    });
+  }
+
   public render() {
     return (
       <div>
-        <h1><input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} /> </h1>
+        <h1>
+          <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+          <i className="fas fa-sign-in-alt" onClick={this.onLogin} />
+        </h1>
         <div className="test">
           {this.state.tasks.map((task: string, i: any) => (
             <li key={i}>
