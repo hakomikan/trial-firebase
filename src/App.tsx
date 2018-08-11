@@ -1,3 +1,4 @@
+import * as firebase from "firebase";
 import * as React from 'react';
 import { Key } from 'ts-keycode-enum';
 import './App.css';
@@ -25,6 +26,16 @@ class App extends React.Component {
     this.deleteTask = this.deleteTask.bind(this);
     this.changeExistTask = this.changeExistTask.bind(this);
     this.onNewTaskFocusOut = this.onNewTaskFocusOut.bind(this);
+
+    const config = {
+      apiKey: "AIzaSyDdIKPJVVwa8pXOHa-yGfdYr_s9ru2Lj-k",
+      authDomain: "checklist-3e43e.firebaseapp.com",
+      databaseURL: "https://checklist-3e43e.firebaseio.com",
+      messagingSenderId: "553703248197",
+      projectId: "checklist-3e43e",
+      storageBucket: "",
+    };
+    firebase.initializeApp(config);
   }
 
   public OnKeyDown(event: any) {
