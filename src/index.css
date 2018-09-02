@@ -19,6 +19,11 @@ div.test {
   position: relative;
 }
 
+div.systemMenu {
+  font-size: 120%;
+  float: right;
+}
+
 li {
   padding-left: 2pt;
   margin-top: 10pt;
@@ -32,6 +37,20 @@ li {
 
 i.far {
   vertical-align: baseline;
+}
+
+a.iconButton {
+  font-size: 120%;
+  margin-left: 5pt;
+  margin-right: 5pt;
+}
+
+a i {
+  vertical-align: middle;
+}
+
+a i:hover {
+  cursor: pointer;
 }
 
 span {

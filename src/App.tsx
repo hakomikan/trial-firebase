@@ -144,7 +144,7 @@ class App extends React.Component {
   }
 
   public onLogout(event: any) {
-    this.fbauth.signOut().then( () => {
+    this.fbauth.signOut().then(() => {
       console.log("logged out!");
       this.setState({
         "accessToken": null,
@@ -154,9 +154,8 @@ class App extends React.Component {
     })
   }
 
-  public getLoginStateName() : string {
-    if (this.state.loginState === "loggedin")
-    {
+  public getLoginStateName(): string {
+    if (this.state.loginState === "loggedin") {
       return "Logged in";
     }
     else {
@@ -164,7 +163,7 @@ class App extends React.Component {
     }
   }
 
-  public getUserName() : string {
+  public getUserName(): string {
     if (this.state.userName) {
       return this.state.userName;
     }
@@ -173,16 +172,28 @@ class App extends React.Component {
     }
   }
 
+  public systemMenu = () => {
+    if (this.state.loginState === "loggedin") {
+      return (
+        <div className="systemMenu">
+          <a className="iconButton" title="logout" onClick={this.onLogout}><i className="fas fa-sign-out-alt" /></a>
+        </div>
+      );
+    }
+    else {
+      return (
+        <div className="systemMenu">
+          <a className="iconButton" title="login" onClick={this.onLogin}><i className="fas fa-sign-in-alt" /></a>
+        </div>
+      );
+    }
+  }
+  
   public render() {
     return (
       <div>
-        <div className="systemMenu">
-          <span>State: {this.getLoginStateName()}</span>
-          <span>User: {this.getUserName()}</span>
-          　<a title="login" href={undefined} onClick={this.onLogin}><i className="fas fa-sign-in-alt"/></a>
-          　<a title="logout" href={undefined} onClick={this.onLogout}><i className="fas fa-sign-out-alt"/></a>
-        </div>
         <div>
+          <this.systemMenu/>
           <h1>
             <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
           </h1>
