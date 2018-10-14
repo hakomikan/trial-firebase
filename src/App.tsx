@@ -120,6 +120,16 @@ class App extends React.Component {
   public onNewTaskFocusOut(event: any) {
     if (this.state.current !== "") {
       this.setState((prevState: any, props) => {
+        const uid = this.getUserId();
+        console.log("uid: " + uid);
+        if(uid) {
+          this.fbdb.ref("users/" + uid).set({
+            tasks: prevState.tasks.concat([this.state.current])
+          }).then(() => {
+            console.log("register:" + uid);
+            console.log("tasks:" + prevState.tasks.concat([this.state.current]));
+          });
+        }
         return {
           "current": "",
           "tasks": prevState.tasks.concat([this.state.current]),
@@ -135,6 +145,7 @@ class App extends React.Component {
         this.setState({
           "accessToken": (result.credential as any).accessToken,
           "loginState": "loggedin",
+          "user" : (result.user as firebase.User),
           "userName": (result.user as firebase.User).displayName,
         });
       }
@@ -169,6 +180,15 @@ class App extends React.Component {
     }
     else {
       return "<no user>";
+    }
+  }
+
+  public getUserId(): string | null {
+    if (this.state.user) {
+      return (this.state.user as firebase.User).uid;
+    }
+    else {
+      return null;
     }
   }
 
