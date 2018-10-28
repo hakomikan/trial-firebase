@@ -133,11 +133,14 @@ class App extends React.Component {
     this.fbauth.signInWithPopup(this.fbgoogleprovider).then(result => {
       if (result.credential !== null) {
         console.log("logged in!");
-        this.setState({
-          "accessToken": (result.credential as any).accessToken,
-          "loginState": "loggedin",
-          "user" : (result.user as firebase.User),
-          "userName": (result.user as firebase.User).displayName,
+        this.fbdb.ref("users/" + (result.user as firebase.User).uid).once("value").then(snapshot => {
+          this.setState({
+            "accessToken": (result.credential as any).accessToken,
+            "loginState": "loggedin",
+            "tasks": snapshot.val().tasks,
+            "user" : (result.user as firebase.User),
+            "userName": (result.user as firebase.User).displayName,
+          })
         });
       }
     }).catch(error => {
