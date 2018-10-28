@@ -26,15 +26,6 @@ class App extends React.Component {
       ],
     }
 
-    this.OnKeyDown = this.OnKeyDown.bind(this);
-    this.changeText = this.changeText.bind(this);
-    this.changeTitle = this.changeTitle.bind(this);
-    this.deleteTask = this.deleteTask.bind(this);
-    this.changeExistTask = this.changeExistTask.bind(this);
-    this.onNewTaskFocusOut = this.onNewTaskFocusOut.bind(this);
-    this.onLogin = this.onLogin.bind(this);
-    this.onLogout = this.onLogout.bind(this);
-
     const config = {
       apiKey: "AIzaSyDdIKPJVVwa8pXOHa-yGfdYr_s9ru2Lj-k",
       authDomain: "checklist-3e43e.firebaseapp.com",
@@ -50,7 +41,7 @@ class App extends React.Component {
     this.fbgoogleprovider = new firebase.auth.GoogleAuthProvider();
   }
 
-  public OnKeyDown(event: any) {
+  public OnKeyDown = (event: any) => {
     const currentIndexString = event.currentTarget.dataset.index;
     if (typeof currentIndexString !== "string") {
       return;
@@ -97,27 +88,27 @@ class App extends React.Component {
     }
   }
 
-  public changeText(event: any) {
+  public changeText = (event: any) => {
     this.setState({ "current": event.target.value });
   }
 
-  public changeTitle(event: any) {
+  public changeTitle = (event: any) => {
     this.setState({ "name": event.target.value })
   }
 
-  public deleteTask(event: any) {
+  public deleteTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
     this.state.tasks.splice(targetIndex, 1)
     this.setState({ "tasks": this.state.tasks })
   }
 
-  public changeExistTask(event: any) {
+  public changeExistTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
     this.state.tasks[targetIndex] = event.target.value;
     this.setState({ "tasks": this.state.tasks });
   }
 
-  public onNewTaskFocusOut(event: any) {
+  public onNewTaskFocusOut = (event: any) => {
     if (this.state.current !== "") {
       this.setState((prevState: any, props) => {
         const uid = this.getUserId();
@@ -138,7 +129,7 @@ class App extends React.Component {
     }
   }
 
-  public onLogin(event: any) {
+  public onLogin = (event: any) => {
     this.fbauth.signInWithPopup(this.fbgoogleprovider).then(result => {
       if (result.credential !== null) {
         console.log("logged in!");
@@ -154,7 +145,7 @@ class App extends React.Component {
     });
   }
 
-  public onLogout(event: any) {
+  public onLogout = (event: any) => {
     this.fbauth.signOut().then(() => {
       console.log("logged out!");
       this.setState({
