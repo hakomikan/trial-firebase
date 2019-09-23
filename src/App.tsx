@@ -113,7 +113,7 @@ class App extends React.Component {
       this.setState((prevState: any, props) => {
         const uid = this.getUserId();
         console.log("uid: " + uid);
-        if(uid) {
+        if (uid) {
           this.fbdb.ref("users/" + uid).set({
             tasks: prevState.tasks.concat([this.state.current])
           }).then(() => {
@@ -138,7 +138,7 @@ class App extends React.Component {
             "accessToken": (result.credential as any).accessToken,
             "loginState": "loggedin",
             "tasks": snapshot.val().tasks,
-            "user" : (result.user as firebase.User),
+            "user": (result.user as firebase.User),
             "userName": (result.user as firebase.User).displayName,
           })
         });
@@ -187,48 +187,46 @@ class App extends React.Component {
   }
 
   public systemMenu = () => {
+    return (
+      <div className="systemMenu">
+        <a className="iconButton" title="logout" onClick={this.onLogout}><i className="fas fa-sign-out-alt" /></a>
+      </div>
+    );
+  }
+
+  public render() {
     if (this.state.loginState === "loggedin") {
       return (
-        <div className="systemMenu">
-          <a className="iconButton" title="logout" onClick={this.onLogout}><i className="fas fa-sign-out-alt" /></a>
+        <div>
+          <div>
+            <this.systemMenu />
+            <h1>
+              <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+            </h1>
+            <div className="test">
+              {this.state.tasks.map((task: string, i: any) => (
+                <li key={i}>
+                  <i className="far fa-square" />
+                  <span><input onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
+                  <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
+                </li>
+              ))}
+              <li itemType="text" className="intermadiate">
+                <i className="intermediate far fa-square" />
+                <span>
+                  <input ref={"input:" + this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
+                </span>
+              </li>
+            </div>
+          </div>
         </div>
       );
     }
     else {
       return (
-        <div className="systemMenu">
-          <a className="iconButton" title="login" onClick={this.onLogin}><i className="fas fa-sign-in-alt" /></a>
-        </div>
+        <a className="iconButton" title="login" onClick={this.onLogin}><i className="fas fa-sign-in-alt" /><span>login</span></a>
       );
     }
-  }
-  
-  public render() {
-    return (
-      <div>
-        <div>
-          <this.systemMenu/>
-          <h1>
-            <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
-          </h1>
-          <div className="test">
-            {this.state.tasks.map((task: string, i: any) => (
-              <li key={i}>
-                <i className="far fa-square" />
-                <span><input onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
-                <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
-              </li>
-            ))}
-            <li itemType="text" className="intermadiate">
-              <i className="intermediate far fa-square" />
-              <span>
-                <input ref={"input:" + this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
-              </span>
-            </li>
-          </div>
-        </div>
-      </div>
-    );
   }
 }
 

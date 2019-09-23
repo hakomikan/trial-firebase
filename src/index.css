@@ -43,6 +43,7 @@ a.iconButton {
   font-size: 120%;
   margin-left: 5pt;
   margin-right: 5pt;
+  cursor: pointer;
 }
 
 a i {
