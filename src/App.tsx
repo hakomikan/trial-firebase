@@ -41,13 +41,19 @@ class App extends React.Component {
     this.fbgoogleprovider = new firebase.auth.GoogleAuthProvider();
     this.fbauth.onAuthStateChanged((user: firebase.User) => {
       if (user !== null) {
-        this.fbdb.ref("users/" + (user as firebase.User).uid).once("value").then(snapshot => {
+        this.fbdb.ref(`users/${user.uid}`).once("value").then(snapshot => {
+          const val = snapshot.val();
+          let tasks = [];
+          if (val !== null) {
+            tasks = val.tasks;
+          }
           this.setState({
             "loginState": "loggedin",
-            "tasks": snapshot.val().tasks,
-            "user": (user as firebase.User),
-            "userName": (user as firebase.User).displayName,
-          })
+            "tasks": tasks,
+            "user": user,
+            "userName": user.displayName,
+          });
+
         });
       }
     });
@@ -112,6 +118,9 @@ class App extends React.Component {
     const targetIndex = event.currentTarget.dataset.index as number;
     this.state.tasks.splice(targetIndex, 1)
     this.setState({ "tasks": this.state.tasks })
+    this.fbdb.ref(`users/${this.state.user.uid}`).set({
+      tasks: this.state.tasks
+    });
   }
 
   public changeExistTask = (event: any) => {
@@ -124,13 +133,9 @@ class App extends React.Component {
     if (this.state.current !== "") {
       this.setState((prevState: any, props) => {
         const uid = this.getUserId();
-        console.log("uid: " + uid);
         if (uid) {
           this.fbdb.ref("users/" + uid).set({
-            tasks: prevState.tasks.concat([this.state.current])
-          }).then(() => {
-            console.log("register:" + uid);
-            console.log("tasks:" + prevState.tasks.concat([this.state.current]));
+            tasks: prevState.tasks.concat([prevState.current])
           });
         }
         return {
