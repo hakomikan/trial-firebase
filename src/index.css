@@ -117,6 +117,10 @@ input:focus {
   }
 
   li:hover i.subicon {
-    visibility: hidden
+    visibility: hidden;
+  }
+
+  div.systemMenu {
+    visibility: hidden;
   }
 }
