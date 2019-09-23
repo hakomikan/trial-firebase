@@ -1,12 +1,4 @@
-// import { } from './Task';
-
-export class Task {
-  public name : string;
-
-  constructor(name: string) {
-    this.name = name
-  }
-}
+import { } from './Task';
 
 it('renders without crashing', () => {
   const v = new Task("unknown");

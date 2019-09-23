@@ -1,8 +1,7 @@
-import { Task } from "./Task.test";
+import { Task } from "./Task";
 
 export class CheckList {
   public name: string;
-  public tasks: Task[];
 
   constructor(name: string) {
     this.name = name;

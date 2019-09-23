@@ -39,18 +39,18 @@ i.far {
   vertical-align: baseline;
 }
 
-a.iconButton {
+span.iconButton {
   font-size: 120%;
   margin-left: 5pt;
   margin-right: 5pt;
   cursor: pointer;
 }
 
-a i {
+span.iconButton i {
   vertical-align: middle;
 }
 
-a i:hover {
+span.iconButton i:hover {
   cursor: pointer;
 }
 

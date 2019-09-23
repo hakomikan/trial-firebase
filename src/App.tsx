@@ -39,7 +39,7 @@ class App extends React.Component {
     this.fbauth = this.fbapp.auth();
     this.fbdb = this.fbapp.database();
     this.fbgoogleprovider = new firebase.auth.GoogleAuthProvider();
-    this.fbauth.onAuthStateChanged((user: firebase.User) => {
+    this.fbauth.onAuthStateChanged((user: firebase.User | null) => {
       if (user !== null) {
         this.fbdb.ref(`users/${user.uid}`).once("value").then(snapshot => {
           const val = snapshot.val();
@@ -125,8 +125,9 @@ class App extends React.Component {
 
   public changeExistTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
-    this.state.tasks[targetIndex] = event.target.value;
-    this.setState({ "tasks": this.state.tasks });
+    let newTasks = this.state.tasks;
+    newTasks[targetIndex] = event.target.value;
+    this.setState({ "tasks": newTasks });
   }
 
   public onNewTaskFocusOut = (event: any) => {
@@ -197,7 +198,7 @@ class App extends React.Component {
   public systemMenu = () => {
     return (
       <div className="systemMenu">
-        <a className="iconButton" title="logout" onClick={this.onLogout}><i className="fas fa-sign-out-alt" /></a>
+        <span className="iconButton" title="logout" onClick={this.onLogout}><i className="fas fa-sign-out-alt" /></span>
       </div>
     );
   }
@@ -232,7 +233,7 @@ class App extends React.Component {
     }
     else {
       return (
-        <a className="iconButton" title="login" onClick={this.onLogin}><i className="fas fa-sign-in-alt" /><span>login</span></a>
+        <span className="iconButton" title="login" onClick={this.onLogin}><i className="fas fa-sign-in-alt" /><span>login</span></span>
       );
     }
   }
