@@ -4,6 +4,7 @@ import 'firebase/database';
 import * as React from 'react';
 import { Key } from 'ts-keycode-enum';
 import './App.css';
+import AutosizeInput from 'react-input-autosize';
 
 class App extends React.Component {
 
@@ -210,20 +211,20 @@ class App extends React.Component {
           <div>
             <this.systemMenu />
             <h1>
-              <input onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+              <AutosizeInput onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
             </h1>
             <div className="test">
               {this.state.tasks.map((task: string, i: any) => (
                 <li key={i}>
                   <i className="far fa-square" />
-                  <span><input onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
+                  <span><AutosizeInput onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
                   <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
                 </li>
               ))}
               <li itemType="text" className="intermadiate">
                 <i className="intermediate far fa-square" />
                 <span>
-                  <input ref={"input:" + this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
+                  <AutosizeInput ref={"input:" + this.state.tasks.length} data-index={this.state.tasks.length} onKeyDown={this.OnKeyDown} onBlur={this.onNewTaskFocusOut} value={this.state.current} onChange={this.changeText} placeholder="<new task>" />
                 </span>
               </li>
             </div>
