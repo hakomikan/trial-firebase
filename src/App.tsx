@@ -39,6 +39,18 @@ class App extends React.Component {
     this.fbauth = this.fbapp.auth();
     this.fbdb = this.fbapp.database();
     this.fbgoogleprovider = new firebase.auth.GoogleAuthProvider();
+    this.fbauth.onAuthStateChanged((user: firebase.User) => {
+      if (user !== null) {
+        this.fbdb.ref("users/" + (user as firebase.User).uid).once("value").then(snapshot => {
+          this.setState({
+            "loginState": "loggedin",
+            "tasks": snapshot.val().tasks,
+            "user": (user as firebase.User),
+            "userName": (user as firebase.User).displayName,
+          })
+        });
+      }
+    });
   }
 
   public OnKeyDown = (event: any) => {
@@ -133,15 +145,6 @@ class App extends React.Component {
     this.fbauth.signInWithPopup(this.fbgoogleprovider).then(result => {
       if (result.credential !== null) {
         console.log("logged in!");
-        this.fbdb.ref("users/" + (result.user as firebase.User).uid).once("value").then(snapshot => {
-          this.setState({
-            "accessToken": (result.credential as any).accessToken,
-            "loginState": "loggedin",
-            "tasks": snapshot.val().tasks,
-            "user": (result.user as firebase.User),
-            "userName": (result.user as firebase.User).displayName,
-          })
-        });
       }
     }).catch(error => {
       console.log(error)
