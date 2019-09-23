@@ -19,17 +19,30 @@
     "ts-keycode-enum": "^1.0.6"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scriptss test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.1",
-    "@types/node": "^10.5.5",
-    "@types/react": "^16.4.7",
-    "@types/react-dom": "^16.0.6",
+    "@types/jest": "^23.3.14",
+    "@types/node": "^10.14.18",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "react-scripts": "^3.1.2",
     "tar": "^4.4.11",
-    "typescript": "^3.0.1"
+    "typescript": "^3.6.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
