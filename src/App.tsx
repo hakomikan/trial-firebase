@@ -18,11 +18,8 @@ class App extends React.Component {
 
     this.state = {
       "current": "",
-      "name": "Before Travel",
+      "name": "now loading",
       "tasks": [
-        "notepc",
-        "tablet",
-        "smart phone"
       ],
     }
 
@@ -44,11 +41,14 @@ class App extends React.Component {
         this.fbdb.ref(`users/${user.uid}`).once("value").then(snapshot => {
           const val = snapshot.val();
           let tasks = [];
+          let name = "no name";
           if (val !== null) {
             tasks = val.tasks;
+            name = val.name;
           }
           this.setState({
             "loginState": "loggedin",
+            "name": name,
             "tasks": tasks,
             "user": user,
             "userName": user.displayName,
@@ -56,6 +56,20 @@ class App extends React.Component {
 
         });
       }
+    });
+  }
+
+  public UpdateName = (newName : string) => {
+    this.fbdb.ref(`users/${this.state.user.uid}/name`).set(newName);
+    this.setState({
+      name: newName
+    });
+  }
+
+  public UpdateTasks = (newTasks : string[]) => {
+    this.fbdb.ref(`users/${this.state.user.uid}/tasks`).set(newTasks);
+    this.setState({
+      tasks: newTasks
     });
   }
 
@@ -67,13 +81,8 @@ class App extends React.Component {
     const currentIndex = parseInt(currentIndexString, 10);
 
     if (currentIndex === this.state.tasks.length && event.keyCode === Key.Enter && this.state.current !== "") {
-      this.setState((prevState: any, props) => {
-        return {
-          "current": "",
-          "name": prevState.name,
-          "tasks": prevState.tasks.concat([this.state.current]),
-        }
-      });
+      this.setState({current: ""});
+      this.UpdateTasks(this.state.tasks.concat([this.state.current]));
     }
     if (event.keyCode === Key.UpArrow) {
       const prevIndex = Math.max(-1, currentIndex - 1);
@@ -102,7 +111,7 @@ class App extends React.Component {
       nextTarget.value = '';
       nextTarget.value = tmp;
       this.state.tasks.splice(currentIndex, 1)
-      this.setState({ "tasks": this.state.tasks })
+      this.UpdateTasks(this.state.tasks);
     }
   }
 
@@ -117,34 +126,25 @@ class App extends React.Component {
   public deleteTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
     this.state.tasks.splice(targetIndex, 1)
-    this.setState({ "tasks": this.state.tasks })
-    this.fbdb.ref(`users/${this.state.user.uid}`).set({
-      tasks: this.state.tasks
-    });
+    this.UpdateTasks(this.state.tasks);
   }
 
   public changeExistTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
     let newTasks = this.state.tasks;
     newTasks[targetIndex] = event.target.value;
-    this.setState({ "tasks": newTasks });
+    this.UpdateTasks(newTasks);
   }
 
   public onNewTaskFocusOut = (event: any) => {
     if (this.state.current !== "") {
-      this.setState((prevState: any, props) => {
-        const uid = this.getUserId();
-        if (uid) {
-          this.fbdb.ref("users/" + uid).set({
-            tasks: prevState.tasks.concat([prevState.current])
-          });
-        }
-        return {
-          "current": "",
-          "tasks": prevState.tasks.concat([this.state.current]),
-        }
-      });
+      this.UpdateTasks(this.state.tasks.concat([this.state.current]));
+      this.setState({current:""});
     }
+  }
+
+  public OnBlur = (event: any) => {
+    this.UpdateName(event.target.value);
   }
 
   public onLogin = (event: any) => {
@@ -210,7 +210,7 @@ class App extends React.Component {
           <div>
             <this.systemMenu />
             <h1>
-              <input onKeyDown={this.OnKeyDown} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+              <input onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
             </h1>
             <div className="test">
               {this.state.tasks.map((task: string, i: any) => (
