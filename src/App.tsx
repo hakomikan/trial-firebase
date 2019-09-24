@@ -243,19 +243,35 @@ class App extends React.Component {
     );
   };
 
+  public OnSelectCheckList = (event: any) => {
+    const currentIndex: string = event.currentTarget.dataset.index;
+    this.setState({
+      currentCheckList: parseInt(currentIndex)
+    });
+  };
+
   public SideMenu = () => {
     return (
       <div className="leftPain">
         <ul>
-          {this.state.checklists.map((checklist: any, i: any) => {
+          {this.state.checklists.map((checklist: any, i: number) => {
             if (this.state.currentCheckList === i) {
               return (
-                <li key={i} className="selected">
+                <li
+                  key={i}
+                  data-index={i}
+                  onClick={this.OnSelectCheckList}
+                  className="selected"
+                >
                   {checklist.name}
                 </li>
               );
             } else {
-              return <li key={i}>{checklist.name}</li>;
+              return (
+                <li key={i} data-index={i} onClick={this.OnSelectCheckList}>
+                  {checklist.name}
+                </li>
+              );
             }
           })}
         </ul>
@@ -282,26 +298,28 @@ class App extends React.Component {
               />
             </h1>
             <div className="checkList">
-              {this.state.tasks.map((task: string, i: any) => (
-                <li key={i}>
-                  <i className="far fa-square" />
-                  <span>
-                    <AutosizeInput
-                      minWidth="300"
-                      onKeyDown={this.OnKeyDown}
-                      ref={"input:" + i}
-                      value={task}
+              {this.state.checklists[this.state.currentCheckList].tasks.map(
+                (task: string, i: any) => (
+                  <li key={i}>
+                    <i className="far fa-square" />
+                    <span>
+                      <AutosizeInput
+                        minWidth="300"
+                        onKeyDown={this.OnKeyDown}
+                        ref={"input:" + i}
+                        value={task}
+                        data-index={i}
+                        onChange={this.changeExistTask}
+                      />
+                    </span>
+                    <i
+                      className="subicon far fa-trash-alt"
                       data-index={i}
-                      onChange={this.changeExistTask}
+                      onClick={this.deleteTask}
                     />
-                  </span>
-                  <i
-                    className="subicon far fa-trash-alt"
-                    data-index={i}
-                    onClick={this.deleteTask}
-                  />
-                </li>
-              ))}
+                  </li>
+                )
+              )}
               <li itemType="text" className="intermadiate">
                 <i className="intermediate far fa-square" />
                 <span>
