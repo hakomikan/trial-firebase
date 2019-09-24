@@ -22,6 +22,37 @@ class App extends React.Component {
       "name": "now loading",
       "tasks": [
       ],
+      "checklists": [
+        {
+          "name": "BeforeShopping",
+          "tasks": [
+            "Money",
+            "Bag",
+            "Check the shopping list"
+          ]
+        },
+        {
+          "name": "BeforeTrip",
+          "tasks": [
+            "Schedule",
+            "Money",
+            "Bag",
+            "Tooth brush",
+            "tooth paste",
+            "AC adapter",
+            "smart phone"
+          ]
+        },
+        {
+          "name": "TripPlanning",
+          "tasks": [
+            "Write fuzzy schedule",
+            "Enumerate activities",
+            "Decide priorities",
+            "Contact friends"
+          ]
+        }
+      ]
     }
 
     const config = {
@@ -208,9 +239,9 @@ class App extends React.Component {
     return (
       <div className="leftPain">
         <ul>
-        <li>1st-CheckList</li>
-        <li>2nd-CheckList</li>
-        <li>3rd-CheckList</li>
+        {this.state.checklists.map((checklist: any, i: any) => (
+        <li>{checklist.name}</li>
+        ))}
         </ul>
       </div>
     );
