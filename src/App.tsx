@@ -22,6 +22,7 @@ class App extends React.Component {
       "name": "now loading",
       "tasks": [
       ],
+      "currentCheckList": 1,
       "checklists": [
         {
           "name": "BeforeShopping",
@@ -239,9 +240,18 @@ class App extends React.Component {
     return (
       <div className="leftPain">
         <ul>
-        {this.state.checklists.map((checklist: any, i: any) => (
-        <li>{checklist.name}</li>
-        ))}
+        {this.state.checklists.map((checklist: any, i: any) => {
+          if(this.state.currentCheckList === i) {
+            return (
+              <li key={i} className="selected">{checklist.name}</li>
+            );
+          }
+          else {
+            return (
+              <li key={i}>{checklist.name}</li>              
+            );
+          }
+        })}
         </ul>
       </div>
     );
