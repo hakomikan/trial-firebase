@@ -204,20 +204,33 @@ class App extends React.Component {
     );
   }
 
+  public SideMenu = () => {
+    return (
+      <div className="leftPain">
+        <ul>
+        <li>1st-CheckList</li>
+        <li>2nd-CheckList</li>
+        <li>3rd-CheckList</li>
+        </ul>
+      </div>
+    );
+  }
+
   public render() {
     if (this.state.loginState === "loggedin") {
       return (
-        <div>
-          <div>
+        <div className="frame">
+          <this.SideMenu />
+          <div className="mainPain">
             <this.systemMenu />
             <h1>
-              <AutosizeInput onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
+              <AutosizeInput minWidth="300" onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
             </h1>
             <div className="test">
               {this.state.tasks.map((task: string, i: any) => (
                 <li key={i}>
                   <i className="far fa-square" />
-                  <span><AutosizeInput onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
+                  <span><AutosizeInput minWidth="300" onKeyDown={this.OnKeyDown} ref={"input:" + i} value={task} data-index={i} onChange={this.changeExistTask} /></span>
                   <i className="subicon far fa-trash-alt" data-index={i} onClick={this.deleteTask} />
                 </li>
               ))}
