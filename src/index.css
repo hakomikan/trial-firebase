@@ -55,6 +55,7 @@ div.leftPain ul {
   border-bottom-color: #333;
   font-family: Arial, Helvetica, sans-serif;
   box-shadow: 0px 2px 2px inset #222;
+  cursor: pointer;
 }
 
 .leftPain li.selected {
