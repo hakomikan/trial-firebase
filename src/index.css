@@ -63,7 +63,6 @@ div.leftPain ul {
   background-color: #666;
 }
 
-
 .leftPain li:first-child {
   box-shadow: none;
 }
@@ -73,7 +72,6 @@ div.mainPain {
   margin: 20px 25px 25px 28px;
   flex: 1;
 }
-
 
 div.checkList {
   display: inline-block;
@@ -127,7 +125,7 @@ i.subicon {
 }
 
 li:hover i.subicon {
-  visibility: visible
+  visibility: visible;
 }
 
 .intermadiate * {
@@ -138,7 +136,7 @@ h1 input {
   color: #777;
   font-size: 24pt;
   font-style: normal;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   box-sizing: border-box;
 }
 
@@ -168,7 +166,7 @@ input:focus {
   color: #ddd;
 }
 
-@media print{
+@media print {
   @page {
     margin: 0px;
   }
