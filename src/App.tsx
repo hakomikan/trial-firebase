@@ -291,7 +291,7 @@ class App extends React.Component {
                 minWidth="300"
                 onKeyDown={this.OnKeyDown}
                 onBlur={this.OnBlur}
-                value={this.state.name}
+                value={this.state.checklists[this.state.currentCheckList].name}
                 ref={"input:" + -1}
                 data-index={-1}
                 onChange={this.changeTitle}
