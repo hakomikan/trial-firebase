@@ -30,9 +30,28 @@ div.frame {
 
 div.leftPain {
   min-height: 100%;
-  width: 300px;
+  width: auto;
+  min-width: 250px;
+  max-width: 400px;
   background-color: #444;
   color: #bbb;
+}
+
+div.leftPain ul {
+  padding: 0px;
+  margin: 0px;
+}
+
+.leftPain li {
+  list-style: none;
+  font-size: 14pt;
+  margin: 0px;
+  padding: 10pt;
+  margin: 0;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #666;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 div.mainPain {
@@ -42,7 +61,7 @@ div.mainPain {
 }
 
 
-div.test {
+div.checkList {
   display: inline-block;
   position: relative;
 }
@@ -52,7 +71,7 @@ div.systemMenu {
   float: right;
 }
 
-li {
+div.checkList li {
   padding-left: 2pt;
   margin-top: 10pt;
   margin-bottom: 10pt;

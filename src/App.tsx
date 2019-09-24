@@ -226,7 +226,7 @@ class App extends React.Component {
             <h1>
               <AutosizeInput minWidth="300" onKeyDown={this.OnKeyDown} onBlur={this.OnBlur} value={this.state.name} ref={"input:" + -1} data-index={-1} onChange={this.changeTitle} />
             </h1>
-            <div className="test">
+            <div className="checkList">
               {this.state.tasks.map((task: string, i: any) => (
                 <li key={i}>
                   <i className="far fa-square" />
