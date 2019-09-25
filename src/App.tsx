@@ -5,6 +5,23 @@ import * as React from "react";
 import { Key } from "ts-keycode-enum";
 import "./App.css";
 import AutosizeInput from "react-input-autosize";
+import * as Immutable from "immutable";
+
+let CheckListTask = Immutable.Record({
+  name: "do nothing",
+  done: false
+});
+
+let CheckList = Immutable.Record({
+  name: "SomeCheckList",
+  tasks: Immutable.List([CheckListTask()])
+});
+
+let CheckListStoreRecord = Immutable.Record({
+  checkLists: Immutable.List([CheckList()])
+});
+
+export class CheckListStore extends CheckListStoreRecord {}
 
 class App extends React.Component {
   public state: any;
@@ -21,33 +38,34 @@ class App extends React.Component {
       name: "now loading",
       tasks: [],
       currentCheckList: 1,
-      checklists: [
-        {
-          name: "BeforeShopping",
-          tasks: ["Money", "Bag", "Check the shopping list"]
-        },
-        {
-          name: "BeforeTrip",
-          tasks: [
-            "Schedule",
-            "Money",
-            "Bag",
-            "Tooth brush",
-            "tooth paste",
-            "AC adapter",
-            "smart phone"
-          ]
-        },
-        {
-          name: "TripPlanning",
-          tasks: [
-            "Write fuzzy schedule",
-            "Enumerate activities",
-            "Decide priorities",
-            "Contact friends"
-          ]
-        }
-      ]
+      checklists: new CheckListStore({
+        checkLists: Immutable.List([
+          CheckList({
+            name: "BeforeShopping",
+            tasks: Immutable.List([
+              CheckListTask({ name: "Money" }),
+              CheckListTask({ name: "Bag" }),
+              CheckListTask({ name: "Check the shopping list" })
+            ])
+          }),
+          CheckList({
+            name: "BeforeTrip",
+            tasks: Immutable.List([
+              CheckListTask({ name: "Schedule" }),
+              CheckListTask({ name: "Tooth brush" }),
+              CheckListTask({ name: "AC adapter" })
+            ])
+          }),
+          CheckList({
+            name: "TripPlanning",
+            tasks: Immutable.List([
+              CheckListTask({ name: "Write fuzzy schedule" }),
+              CheckListTask({ name: "Enumerate activities" }),
+              CheckListTask({ name: "Contact friends" })
+            ])
+          })
+        ])
+      })
     };
 
     const config = {
@@ -251,10 +269,12 @@ class App extends React.Component {
   };
 
   public SideMenu = () => {
+    let checkListStore = this.state.checklists as CheckListStore;
+
     return (
       <div className="leftPain">
         <ul>
-          {this.state.checklists.map((checklist: any, i: number) => {
+          {checkListStore.checkLists.map((checklist, i) => {
             if (this.state.currentCheckList === i) {
               return (
                 <li
@@ -281,6 +301,15 @@ class App extends React.Component {
 
   public render() {
     if (this.state.loginState === "loggedin") {
+      let checkListStore = this.state.checklists as CheckListStore;
+      let checkList = checkListStore.checkLists.get(
+        this.state.currentCheckList
+      );
+
+      if (!checkList) {
+        throw new Error("invalid checklist store");
+      }
+
       return (
         <div className="frame">
           <this.SideMenu />
@@ -291,41 +320,39 @@ class App extends React.Component {
                 minWidth="300"
                 onKeyDown={this.OnKeyDown}
                 onBlur={this.OnBlur}
-                value={this.state.checklists[this.state.currentCheckList].name}
+                value={checkList.name}
                 ref={"input:" + -1}
                 data-index={-1}
                 onChange={this.changeTitle}
               />
             </h1>
             <div className="checkList">
-              {this.state.checklists[this.state.currentCheckList].tasks.map(
-                (task: string, i: any) => (
-                  <li key={i}>
-                    <i className="far fa-square" />
-                    <span>
-                      <AutosizeInput
-                        minWidth="300"
-                        onKeyDown={this.OnKeyDown}
-                        ref={"input:" + i}
-                        value={task}
-                        data-index={i}
-                        onChange={this.changeExistTask}
-                      />
-                    </span>
-                    <i
-                      className="subicon far fa-trash-alt"
+              {checkList.tasks.map((task, i) => (
+                <li key={i}>
+                  <i className="far fa-square" />
+                  <span>
+                    <AutosizeInput
+                      minWidth="300"
+                      onKeyDown={this.OnKeyDown}
+                      ref={"input:" + i}
+                      value={task.name}
                       data-index={i}
-                      onClick={this.deleteTask}
+                      onChange={this.changeExistTask}
                     />
-                  </li>
-                )
-              )}
+                  </span>
+                  <i
+                    className="subicon far fa-trash-alt"
+                    data-index={i}
+                    onClick={this.deleteTask}
+                  />
+                </li>
+              ))}
               <li itemType="text" className="intermadiate">
                 <i className="intermediate far fa-square" />
                 <span>
                   <AutosizeInput
-                    ref={"input:" + this.state.tasks.length}
-                    data-index={this.state.tasks.length}
+                    ref={"input:" + checkList.tasks.count()}
+                    data-index={checkList.tasks.count()}
                     onKeyDown={this.OnKeyDown}
                     onBlur={this.onNewTaskFocusOut}
                     value={this.state.current}
