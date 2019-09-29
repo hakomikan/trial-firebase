@@ -84,20 +84,24 @@ class App extends React.Component {
     this.fbauth.onAuthStateChanged((user: firebase.User | null) => {
       if (user !== null) {
         this.fbdb
-          .ref(`users/${user.uid}`)
+          .ref(`users/${user.uid}/store`)
           .once("value")
           .then(snapshot => {
             const val = snapshot.val();
-            let tasks = [];
-            let name = "no name";
+
+            let store = this.state.checklists as CheckListStore;
+            console.log(store);
+
             if (val !== null) {
-              tasks = val.tasks;
-              name = val.name;
+              // console.log(val);
+              // store = new CheckListStore(val);
+              // console.log(store);
             }
             this.setState({
               loginState: "loggedin",
-              name: name,
-              tasks: tasks,
+              name: this.state.name,
+              tasks: this.state.tasks,
+              checklists: store,
               user: user,
               userName: user.displayName
             });
@@ -106,10 +110,24 @@ class App extends React.Component {
     });
   }
 
+  public get CurrentIndex(): number {
+    return this.state.currentCheckList as number;
+  }
+
+  public UpdateDatabase(store: CheckListStore): void {
+    this.fbdb
+      .ref(`users/${this.state.user.uid}/store`)
+      .set(JSON.parse(JSON.stringify(store)));
+  }
+
   public UpdateName = (newName: string) => {
-    this.fbdb.ref(`users/${this.state.user.uid}/name`).set(newName);
+    const newState = this.CheckListStore.update("checkLists", checkLists =>
+      checkLists.update(this.CurrentIndex, checklist =>
+        checklist.update("name", name => newName)
+      )
+    );
     this.setState({
-      name: newName
+      checklists: newState
     });
   };
 
@@ -176,7 +194,7 @@ class App extends React.Component {
   };
 
   public changeTitle = (event: any) => {
-    this.setState({ name: event.target.value });
+    this.UpdateName(event.target.value as string);
   };
 
   public deleteTask = (event: any) => {
@@ -268,13 +286,28 @@ class App extends React.Component {
     });
   };
 
-  public SideMenu = () => {
-    let checkListStore = this.state.checklists as CheckListStore;
+  public get CheckListStore(): CheckListStore {
+    let store = this.state.checklists as CheckListStore;
+    return store;
+  }
 
+  public get CurrentCheckList() {
+    let checkList = this.CheckListStore.checkLists.get(
+      this.state.currentCheckList
+    );
+
+    if (!checkList) {
+      throw new Error("invalid checklist store");
+    }
+
+    return checkList;
+  }
+
+  public SideMenu = () => {
     return (
       <div className="leftPain">
         <ul>
-          {checkListStore.checkLists.map((checklist, i) => {
+          {this.CheckListStore.checkLists.map((checklist, i) => {
             if (this.state.currentCheckList === i) {
               return (
                 <li
@@ -301,14 +334,7 @@ class App extends React.Component {
 
   public render() {
     if (this.state.loginState === "loggedin") {
-      let checkListStore = this.state.checklists as CheckListStore;
-      let checkList = checkListStore.checkLists.get(
-        this.state.currentCheckList
-      );
-
-      if (!checkList) {
-        throw new Error("invalid checklist store");
-      }
+      let checkList = this.CurrentCheckList;
 
       return (
         <div className="frame">
