@@ -11,6 +11,7 @@
     "@types/react-fontawesome": "^1.6.4",
     "@types/react-input-autosize": "^1.2.0",
     "firebase": "^6.6.2",
+    "immutable": "^4.0.0-rc.12",
     "lodash.template": "^4.5.0",
     "react": "^16.9.0",
     "react-dom": "^16.4.2",
