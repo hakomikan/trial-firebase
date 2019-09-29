@@ -7,21 +7,51 @@ import "./App.css";
 import AutosizeInput from "react-input-autosize";
 import * as Immutable from "immutable";
 
-let CheckListTask = Immutable.Record({
+let CheckListTaskRecord = Immutable.Record({
   name: "do nothing",
   done: false
 });
 
-let CheckList = Immutable.Record({
+export class CheckListTask extends CheckListTaskRecord {
+  public static fromJSON(json: any) {
+    return new CheckListTaskRecord({
+      name: json.name,
+      done: json.done
+    });
+  }
+}
+
+let CheckListRecord = Immutable.Record({
   name: "SomeCheckList",
-  tasks: Immutable.List([CheckListTask()])
+  tasks: Immutable.List([new CheckListTask()])
 });
+
+export class CheckList extends CheckListRecord {
+  public static fromJSON(json: any): CheckList {
+    return new CheckList({
+      name: json.name,
+      tasks: Immutable.List(
+        json.tasks.map((task: any) => CheckListTask.fromJSON(task))
+      )
+    });
+  }
+}
 
 let CheckListStoreRecord = Immutable.Record({
-  checkLists: Immutable.List([CheckList()])
+  checkLists: Immutable.List([new CheckList()])
 });
 
-export class CheckListStore extends CheckListStoreRecord {}
+export class CheckListStore extends CheckListStoreRecord {
+  public static fromJSON(json: any): CheckListStore {
+    return new CheckListStore(
+      CheckListStoreRecord({
+        checkLists: Immutable.List(
+          json.checkLists.map((checklist: any) => CheckList.fromJSON(checklist))
+        )
+      })
+    );
+  }
+}
 
 class App extends React.Component {
   public state: any;
@@ -38,33 +68,33 @@ class App extends React.Component {
       name: "now loading",
       tasks: [],
       currentCheckList: 1,
-      checklists: new CheckListStore({
-        checkLists: Immutable.List([
-          CheckList({
+      checklists: CheckListStore.fromJSON({
+        checkLists: [
+          {
             name: "BeforeShopping",
-            tasks: Immutable.List([
-              CheckListTask({ name: "Money" }),
-              CheckListTask({ name: "Bag" }),
-              CheckListTask({ name: "Check the shopping list" })
-            ])
-          }),
-          CheckList({
+            tasks: [
+              { name: "Money" },
+              { name: "Bag" },
+              { name: "Check the shopping list" }
+            ]
+          },
+          {
             name: "BeforeTrip",
-            tasks: Immutable.List([
-              CheckListTask({ name: "Schedule" }),
-              CheckListTask({ name: "Tooth brush" }),
-              CheckListTask({ name: "AC adapter" })
-            ])
-          }),
-          CheckList({
+            tasks: [
+              { name: "Schedule" },
+              { name: "Tooth brush" },
+              { name: "AC adapter" }
+            ]
+          },
+          {
             name: "TripPlanning",
-            tasks: Immutable.List([
-              CheckListTask({ name: "Write fuzzy schedule" }),
-              CheckListTask({ name: "Enumerate activities" }),
-              CheckListTask({ name: "Contact friends" })
-            ])
-          })
-        ])
+            tasks: [
+              { name: "Write fuzzy schedule" },
+              { name: "Enumerate activities" },
+              { name: "Contact friends" }
+            ]
+          }
+        ]
       })
     };
 
@@ -90,12 +120,9 @@ class App extends React.Component {
             const val = snapshot.val();
 
             let store = this.state.checklists as CheckListStore;
-            console.log(store);
 
             if (val !== null) {
-              // console.log(val);
-              // store = new CheckListStore(val);
-              // console.log(store);
+              store = CheckListStore.fromJSON(val);
             }
             this.setState({
               loginState: "loggedin",
@@ -114,10 +141,13 @@ class App extends React.Component {
     return this.state.currentCheckList as number;
   }
 
-  public UpdateDatabase(store: CheckListStore): void {
+  public UpdateDatabase(newStore: CheckListStore): void {
+    this.setState({
+      checklists: newStore
+    });
     this.fbdb
       .ref(`users/${this.state.user.uid}/store`)
-      .set(JSON.parse(JSON.stringify(store)));
+      .set(JSON.parse(JSON.stringify(newStore)));
   }
 
   public UpdateName = (newName: string) => {
@@ -126,16 +156,49 @@ class App extends React.Component {
         checklist.update("name", name => newName)
       )
     );
-    this.setState({
-      checklists: newState
-    });
+    this.UpdateDatabase(newState);
   };
 
-  public UpdateTasks = (newTasks: string[]) => {
-    this.fbdb.ref(`users/${this.state.user.uid}/tasks`).set(newTasks);
-    this.setState({
-      tasks: newTasks
-    });
+  public UpdateTasks_ = (newTasks: string[]) => {
+    const newState = this.CheckListStore.update("checkLists", checkLists =>
+      checkLists.update(this.CurrentIndex, checklist =>
+        checklist.update("tasks", tasks =>
+          Immutable.List(
+            newTasks.map(task => new CheckListTask({ name: task, done: false }))
+          )
+        )
+      )
+    );
+    this.UpdateDatabase(newState);
+  };
+
+  public UpdateTask = (index: number, newTask: CheckListTask) => {
+    const newState = this.CheckListStore.update("checkLists", checkLists =>
+      checkLists.update(this.CurrentIndex, checklist =>
+        checklist.update("tasks", tasks => tasks.update(index, task => newTask))
+      )
+    );
+    this.UpdateDatabase(newState);
+  };
+
+  public AppendTask = (taskName: string) => {
+    const newState = this.CheckListStore.update("checkLists", checkLists =>
+      checkLists.update(this.CurrentIndex, checklist =>
+        checklist.update("tasks", tasks =>
+          tasks.push(new CheckListTask({ name: taskName }))
+        )
+      )
+    );
+    this.UpdateDatabase(newState);
+  };
+
+  public DeleteTask = (taskIndex: number) => {
+    const newState = this.CheckListStore.update("checkLists", checkLists =>
+      checkLists.update(this.CurrentIndex, checklist =>
+        checklist.update("tasks", tasks => tasks.delete(taskIndex))
+      )
+    );
+    this.UpdateDatabase(newState);
   };
 
   public OnKeyDown = (event: any) => {
@@ -146,12 +209,12 @@ class App extends React.Component {
     const currentIndex = parseInt(currentIndexString, 10);
 
     if (
-      currentIndex === this.state.tasks.length &&
+      currentIndex === this.CurrentCheckList.tasks.count() &&
       event.keyCode === Key.Enter &&
       this.state.current !== ""
     ) {
       this.setState({ current: "" });
-      this.UpdateTasks(this.state.tasks.concat([this.state.current]));
+      this.AppendTask(this.state.current);
     }
     if (event.keyCode === Key.UpArrow) {
       const prevIndex = Math.max(-1, currentIndex - 1);
@@ -163,7 +226,7 @@ class App extends React.Component {
       event.preventDefault();
     }
     if (event.keyCode === Key.DownArrow) {
-      const nextIndex = Math.min(this.state.tasks.length, currentIndex + 1);
+      const nextIndex = Math.min(this.CurrentTasks.count(), currentIndex + 1);
       const nextTarget = this.refs["input:" + nextIndex] as any;
       const tmp = nextTarget.value;
       nextTarget.focus();
@@ -174,7 +237,7 @@ class App extends React.Component {
     if (
       event.keyCode === Key.Backspace &&
       event.currentTarget.value === "" &&
-      currentIndex !== this.state.tasks.length &&
+      currentIndex !== this.CurrentTasks.count() &&
       currentIndex !== -1
     ) {
       event.preventDefault();
@@ -184,8 +247,7 @@ class App extends React.Component {
       nextTarget.focus();
       nextTarget.value = "";
       nextTarget.value = tmp;
-      this.state.tasks.splice(currentIndex, 1);
-      this.UpdateTasks(this.state.tasks);
+      this.DeleteTask(currentIndex);
     }
   };
 
@@ -199,20 +261,26 @@ class App extends React.Component {
 
   public deleteTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
-    this.state.tasks.splice(targetIndex, 1);
-    this.UpdateTasks(this.state.tasks);
+    this.DeleteTask(targetIndex);
   };
 
   public changeExistTask = (event: any) => {
     const targetIndex = event.currentTarget.dataset.index as number;
-    let newTasks = this.state.tasks;
-    newTasks[targetIndex] = event.target.value;
-    this.UpdateTasks(newTasks);
+    const newTaskName = event.target.value;
+    const targetTask = this.CurrentTasks.get(targetIndex);
+    if (!targetTask) {
+      return;
+    }
+
+    this.UpdateTask(
+      targetIndex,
+      targetTask.update("name", name => newTaskName)
+    );
   };
 
   public onNewTaskFocusOut = (event: any) => {
     if (this.state.current !== "") {
-      this.UpdateTasks(this.state.tasks.concat([this.state.current]));
+      this.AppendTask(this.state.current);
       this.setState({ current: "" });
     }
   };
@@ -301,6 +369,10 @@ class App extends React.Component {
     }
 
     return checkList;
+  }
+
+  public get CurrentTasks() {
+    return this.CurrentCheckList.tasks;
   }
 
   public SideMenu = () => {
