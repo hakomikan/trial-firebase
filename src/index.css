@@ -74,6 +74,7 @@ div.leftPain ul {
 
 .leftPain input {
   font: inherit;
+  color: #bbb;
 }
 
 .leftPain ::placeholder {

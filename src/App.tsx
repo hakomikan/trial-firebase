@@ -403,9 +403,7 @@ class App extends React.Component {
             key={this.CheckListStore.checkLists.count()}
             data-index={this.CheckListStore.checkLists.count()}
           >
-            <span>
-              <AutosizeInput minWidth="220" placeholder="<new CheckList>" />
-            </span>
+            <AutosizeInput minWidth="220" placeholder="<new CheckList>" />
           </li>
         </ul>
       </div>
