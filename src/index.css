@@ -42,7 +42,7 @@ div.leftPain {
 div.leftPain ul {
   padding: 0px;
   margin: 0px;
-  box-shadow: -2px 2px 2px #222;
+  box-shadow: -2px 2px 2px #3c3c3c;
 }
 
 .leftPain li {
@@ -66,6 +66,18 @@ div.leftPain ul {
 
 .leftPain li:first-child {
   box-shadow: none;
+}
+
+.leftPain li:last-child {
+  border-bottom-style: none;
+}
+
+.leftPain input {
+  font: inherit;
+}
+
+.leftPain ::placeholder {
+  color: #666;
 }
 
 div.mainPain {
@@ -133,21 +145,25 @@ li:hover i.subicon {
   color: #ddd;
 }
 
+input {
+  border-style: none;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: transparent;
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 h1 input {
   color: #777;
   font-size: 24pt;
   font-style: normal;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  box-sizing: border-box;
 }
 
-input {
+.checkList input {
   color: #777;
-  border-style: none;
   font-size: 14pt;
-  font-style: normal;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 0;
   width: 70%;
 }
 

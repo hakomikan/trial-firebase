@@ -399,6 +399,14 @@ class App extends React.Component {
               );
             }
           })}
+          <li
+            key={this.CheckListStore.checkLists.count()}
+            data-index={this.CheckListStore.checkLists.count()}
+          >
+            <span>
+              <AutosizeInput minWidth="220" placeholder="<new CheckList>" />
+            </span>
+          </li>
         </ul>
       </div>
     );
