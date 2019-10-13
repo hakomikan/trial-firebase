@@ -138,6 +138,10 @@ i.subicon {
   margin-right: 5px;
 }
 
+h1:hover i.subicon {
+  visibility: visible;
+}
+
 li:hover i.subicon {
   visibility: visible;
 }

@@ -31,7 +31,7 @@ export class CheckList extends CheckListRecord {
     return new CheckList({
       name: json.name,
       tasks: Immutable.List(
-        json.tasks.map((task: any) => CheckListTask.fromJSON(task))
+        (json.tasks || []).map((task: any) => CheckListTask.fromJSON(task))
       )
     });
   }
@@ -206,6 +206,18 @@ class App extends React.Component {
       list => list.push(CheckList.fromJSON({ name: "new checklist", tasks: [{name:"test"}] })));
     this.UpdateDatabase(newState);
     this.setState({currentCheckList: newState.checkLists.count()-1});
+  }
+
+  public DeleteCheckList = (event: any) => {
+    const currentIndexString = event.currentTarget.dataset.index;
+    if (typeof currentIndexString !== "string") {
+      return;
+    }
+    const currentIndex = parseInt(currentIndexString, 10);
+
+    const newState = this.CheckListStore.update("checkLists", checkLists => checkLists.remove(currentIndex));
+    this.setState({currentCheckList: 0});
+    this.UpdateDatabase(newState);
   }
 
   public OnKeyDown = (event: any) => {
@@ -436,6 +448,11 @@ class App extends React.Component {
                 ref={"input:" + -1}
                 data-index={-1}
                 onChange={this.changeTitle}
+              />
+              <i
+                className="subicon far fa-trash-alt"
+                data-index={this.state.currentCheckList}
+                onClick={this.DeleteCheckList}
               />
             </h1>
             <div className="checkList">
