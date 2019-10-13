@@ -201,6 +201,13 @@ class App extends React.Component {
     this.UpdateDatabase(newState);
   };
 
+  public AddCheckList = () => {
+    const newState = this.CheckListStore.update("checkLists",
+      list => list.push(CheckList.fromJSON({ name: "new checklist", tasks: [{name:"test"}] })));
+    this.UpdateDatabase(newState);
+    this.setState({currentCheckList: newState.checkLists.count()-1});
+  }
+
   public OnKeyDown = (event: any) => {
     const currentIndexString = event.currentTarget.dataset.index;
     if (typeof currentIndexString !== "string") {
@@ -402,8 +409,9 @@ class App extends React.Component {
           <li
             key={this.CheckListStore.checkLists.count()}
             data-index={this.CheckListStore.checkLists.count()}
+            onClick={this.AddCheckList}
           >
-            <AutosizeInput minWidth="220" placeholder="<new CheckList>" />
+            <i className="fas fa-plus"></i>
           </li>
         </ul>
       </div>
